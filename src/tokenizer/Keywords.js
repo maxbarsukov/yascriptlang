@@ -5,6 +5,7 @@ const Keywords = {
   LAMBDA: 'lambda',
   TRUE: 'true',
   FALSE: 'false',
+  LET: 'let',
 };
 
 export default Keywords;

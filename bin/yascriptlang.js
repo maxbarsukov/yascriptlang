@@ -13,15 +13,23 @@ const {
 const args = process.argv.splice(process.execArgv.length + 2);
 
 const code = `
-print-range = lambda(a, b)
-                if a <= b then {
-                  print(a);
-                  if a + 1 <= b {
-                    print(", ");
-                    print-range(a + 1, b);
-                  } else println("");
-                };
-print-range(1, 5);
+println(let loop (n = 100)
+          if n > 0 then n + loop(n - 1)
+                   else 0);
+
+let (x = 2, y = x + 1, z = x + y)
+  println(x + y + z);
+
+# errors out, the vars are bound to the let body
+# print(x + y + z);
+
+let (x = 10) {
+  let (x = x * 2, y = x * x) {
+    println(x);  ## 20
+    println(y);  ## 400
+  };
+  println(x);  ## 10
+};
 `
 
 const inputStream = new InputStream(code);
@@ -32,7 +40,7 @@ const ast = parser.parse();
 const globalEnv = new Environment();
 
 globalEnv.def("println", function(val){
-  console.log(val + "\n");
+  console.log(val);
 });
 
 globalEnv.def("print", function(val){

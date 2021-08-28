@@ -134,6 +134,7 @@ class Parser {
   parseLambda() {
     return {
       type: NodeTypes.LAMBDA,
+      name: this.tokens.peek().type === TokenTypes.VAR ? this.tokens.next().value : null,
       vars: this.delimited('(', ')', ',', this.parseVarname.bind(this)),
       body: this.parseExpression(),
     };
@@ -151,6 +152,39 @@ class Parser {
     return this.isPunc('(') ? this.parseCall(expr) : expr;
   }
 
+  parseLet() {
+    this.skipKeyword(Keywords.LET);
+    if (this.tokens.peek().type === TokenTypes.VAR) {
+      const name = this.tokens.next().value;
+      const defs = this.delimited('(', ')', ',', this.parseVardef.bind(this));
+      return {
+        type: NodeTypes.CALL,
+        func: {
+          type: NodeTypes.LAMBDA,
+          name,
+          vars: defs.map((def) => def.name),
+          body: this.parseExpression(),
+        },
+        args: defs.map((def) => def.def || this.FALSE),
+      };
+    }
+    return {
+      type: NodeTypes.LET,
+      vars: this.delimited('(', ')', ',', this.parseVardef.bind(this)),
+      body: this.parseExpression(),
+    };
+  }
+
+  parseVardef() {
+    const name = this.parseVarname();
+    let def;
+    if (this.isOp('=')) {
+      this.tokens.next();
+      def = this.parseExpression();
+    }
+    return { name, def };
+  }
+
   parseAtom() {
     return this.maybeCall(() => {
       if (this.isPunc('(')) {
@@ -160,6 +194,7 @@ class Parser {
         return exp;
       }
       if (this.isPunc('{')) return this.parseProg();
+      if (this.isKeyword(Keywords.LET)) return this.parseLet();
       if (this.isKeyword(Keywords.IF)) return this.parseIf();
       if (this.isKeyword(Keywords.TRUE) || this.isKeyword(Keywords.FALSE)) return this.parseBool();
       if (this.isKeyword(Keywords.LAMBDA)) {

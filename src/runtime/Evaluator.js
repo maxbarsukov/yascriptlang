@@ -25,6 +25,14 @@ class Evaluator {
       case NodeTypes.LAMBDA: {
         return this.makeLambda(env, exp);
       }
+      case NodeTypes.LET: {
+        exp.vars.forEach((v) => {
+          const scope = env.extend();
+          scope.def(v.name, v.def ? this.evaluate(v.def, env) : false);
+          env = scope;
+        });
+        return this.evaluate(exp.body, env);
+      }
       case NodeTypes.IF: {
         const cond = this.evaluate(exp.cond, env);
         if (cond !== false) return this.evaluate(exp.then, env);
@@ -78,7 +86,7 @@ class Evaluator {
   }
 
   static makeLambda(env, exp) {
-    return function() {
+    function lambda() {
       const names = exp.vars;
       const scope = env.extend();
       for (let i = 0; i < names.length; ++i) {
@@ -86,6 +94,11 @@ class Evaluator {
       }
       return Evaluator.evaluate(exp.body, scope);
     }
+    if (exp.name) {
+      env = env.extend();
+      env.def(exp.name, lambda);
+    }
+    return lambda;
   }
 }
 
