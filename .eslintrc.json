@@ -28,6 +28,7 @@
         "arrow-body-style":"warn",
         "function-paren-newline":"off",
         "no-plusplus":"off",
+        "class-methods-use-this": "warn",
         "no-unused-vars":"warn",
         "space-before-function-paren":"off",
         "no-underscore-dangle":"warn",
