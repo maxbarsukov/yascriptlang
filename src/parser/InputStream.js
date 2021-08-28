@@ -8,7 +8,7 @@ class InputStream {
 
   next() {
     const ch = this.input.charAt(this.pos++);
-    if (ch === "\n") {
+    if (ch === '\n') {
       this.line++;
       this.col = 0;
     } else {
@@ -22,10 +22,12 @@ class InputStream {
   }
 
   eof() {
-    return this.peek() === "";
+    return this.peek() === '';
   }
 
   croak(msg) {
-    throw new Error(msg + " (" + this.line + ":" + this.col + ")");
+    throw new Error(`${msg} (${this.line}:${this.col})`);
   }
 }
+
+export default InputStream;
