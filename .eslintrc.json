@@ -29,8 +29,11 @@
         "function-paren-newline":"off",
         "no-plusplus":"off",
         "class-methods-use-this": "warn",
+        "import/extensions": "off",
         "no-unused-vars":"warn",
         "space-before-function-paren":"off",
+        "no-return-assign": "warn",
+        "prefer-rest-params": "warn",
         "no-underscore-dangle":"warn",
         "max-len":[
             "warn",

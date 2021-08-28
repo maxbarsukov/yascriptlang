@@ -44,7 +44,7 @@ class TokenStream {
 
   readNumber() {
     let hasDot = false;
-    const number = this.readWhile(ch => {
+    const number = this.readWhile((ch) => {
       if (ch === '.') {
         if (hasDot) return false;
         hasDot = true;
@@ -94,7 +94,7 @@ class TokenStream {
   }
 
   skipComment() {
-    this.readWhile(ch => ch !== '\n');
+    this.readWhile((ch) => ch !== '\n');
     this.input.next();
   }
 
