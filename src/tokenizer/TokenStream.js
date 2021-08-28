@@ -59,7 +59,7 @@ class TokenStream {
   }
 
   readIdent() {
-    const id = this.readWhile(this.isId);
+    const id = this.readWhile(this.isId.bind(this));
     return {
       type: this.isKeyword(id) ? TokenTypes.KEYWORD : TokenTypes.VAR,
       value: id,
@@ -141,6 +141,10 @@ class TokenStream {
 
   eof() {
     return this.peek() == null;
+  }
+
+  croak(msg) {
+    return this.input.croak(msg);
   }
 }
 

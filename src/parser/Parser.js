@@ -4,7 +4,7 @@ import Keywords from '../tokenizer/Keywords.js';
 
 class Parser {
   constructor(input) {
-    this.input = input;
+    this.tokens = input;
     this.PRECEDENCE = {
       '=': 1,
       '||': 2,
@@ -32,37 +32,37 @@ class Parser {
   }
 
   isPunc(ch) {
-    const tok = this.input.peek();
+    const tok = this.tokens.peek();
     return tok && tok.type === TokenTypes.PUNC && (!ch || tok.value === ch) && tok;
   }
 
   isKeyword(kw) {
-    const tok = this.input.peek();
+    const tok = this.tokens.peek();
     return tok && tok.type === TokenTypes.KEYWORD && (!kw || tok.value === kw) && tok;
   }
 
   isOp(op) {
-    const tok = this.input.peek();
+    const tok = this.tokens.peek();
     return tok && tok.type === TokenTypes.OP && (!op || tok.value === op) && tok;
   }
 
   skipPunc(ch) {
-    if (this.isPunc(ch)) this.input.next();
-    else this.input.croak(`Expecting punctuation: "${ch}"`);
+    if (this.isPunc(ch)) this.tokens.next();
+    else this.tokens.croak(`Expecting punctuation: "${ch}"`);
   }
 
   skipKeyword(kw) {
-    if (this.isKeyword(kw)) this.input.next();
-    else this.input.croak(`Expecting keyword: "${kw}"`);
+    if (this.isKeyword(kw)) this.tokens.next();
+    else this.tokens.croak(`Expecting keyword: "${kw}"`);
   }
 
   skipOp(op) {
-    if (this.isOp(op)) this.input.next();
-    else this.input.croak(`Expecting operator: "${op}"`);
+    if (this.isOp(op)) this.tokens.next();
+    else this.tokens.croak(`Expecting operator: "${op}"`);
   }
 
   unexpected() {
-    this.input.croak(`Unexpected token: ${JSON.stringify(this.input.peek())}`);
+    this.tokens.croak(`Unexpected token: ${JSON.stringify(this.tokens.peek())}`);
   }
 
   maybeBinary(left, myPrec) {
@@ -70,7 +70,7 @@ class Parser {
     if (tok) {
       const hisPrec = this.PRECEDENCE[tok.value];
       if (hisPrec > myPrec) {
-        this.input.next();
+        this.tokens.next();
         return this.maybeBinary(
           {
             type: tok.value === '=' ? NodeTypes.ASSIGN : NodeTypes.BINARY,
@@ -89,7 +89,7 @@ class Parser {
     const a = [];
     let first = true;
     this.skipPunc(start);
-    while (!this.input.eof()) {
+    while (!this.tokens.eof()) {
       if (this.isPunc(stop)) break;
       if (first) first = false;
       else this.skipPunc(separator);
@@ -104,13 +104,13 @@ class Parser {
     return {
       type: NodeTypes.CALL,
       func,
-      args: this.delimited('(', ')', ',', this.parseExpression),
+      args: this.delimited('(', ')', ',', this.parseExpression.bind(this)),
     };
   }
 
   parseVarname() {
-    const name = this.input.next();
-    if (name.type !== TokenTypes.VAR) this.input.croak('Expecting variable name');
+    const name = this.tokens.next();
+    if (name.type !== TokenTypes.VAR) this.tokens.croak('Expecting variable name');
     return name.value;
   }
 
@@ -125,7 +125,7 @@ class Parser {
       then,
     };
     if (this.isKeyword(Keywords.ELSE)) {
-      this.input.next();
+      this.tokens.next();
       ret.else = this.parseExpression();
     }
     return ret;
@@ -134,7 +134,7 @@ class Parser {
   parseLambda() {
     return {
       type: NodeTypes.LAMBDA,
-      vars: this.delimited('(', ')', ',', this.parseVarname),
+      vars: this.delimited('(', ')', ',', this.parseVarname.bind(this)),
       body: this.parseExpression(),
     };
   }
@@ -142,7 +142,7 @@ class Parser {
   parseBool() {
     return {
       type: NodeTypes.BOOL,
-      value: this.input.next().value === Keywords.TRUE,
+      value: this.tokens.next().value === Keywords.TRUE,
     };
   }
 
@@ -154,7 +154,7 @@ class Parser {
   parseAtom() {
     return this.maybeCall(() => {
       if (this.isPunc('(')) {
-        this.input.next();
+        this.tokens.next();
         const exp = this.parseExpression();
         this.skipPunc(')');
         return exp;
@@ -163,10 +163,10 @@ class Parser {
       if (this.isKeyword(Keywords.IF)) return this.parseIf();
       if (this.isKeyword(Keywords.TRUE) || this.isKeyword(Keywords.FALSE)) return this.parseBool();
       if (this.isKeyword(Keywords.LAMBDA)) {
-        this.input.next();
+        this.tokens.next();
         return this.parseLambda();
       }
-      const tok = this.input.next();
+      const tok = this.tokens.next();
       if (tok.type === TokenTypes.VAR
         || tok.type === TokenTypes.NUM
         || tok.type === TokenTypes.STR) {
@@ -178,9 +178,9 @@ class Parser {
 
   parseToplevel() {
     const prog = [];
-    while (!this.input.eof()) {
+    while (!this.tokens.eof()) {
       prog.push(this.parseExpression());
-      if (!this.input.eof()) this.skipPunc(';');
+      if (!this.tokens.eof()) this.skipPunc(';');
     }
     return {
       type: NodeTypes.PROG,
@@ -189,7 +189,7 @@ class Parser {
   }
 
   parseProg() {
-    const prog = this.delimited('{', '}', ';', this.parseExpression);
+    const prog = this.delimited('{', '}', ';', this.parseExpression.bind(this));
     if (prog.length === 0) return this.FALSE;
     if (prog.length === 1) return prog[0];
     return {
