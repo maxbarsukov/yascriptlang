@@ -1,4 +1,6 @@
-const FALSE = { type: 'bool', value: false };
+import NodeTypes from './NodeTypes';
+import TokenTypes from '../tokenizer/TokenTypes';
+import Keywords from '../tokenizer/Keywords';
 
 class Parser {
   constructor(input) {
@@ -19,6 +21,10 @@ class Parser {
       '/': 20,
       '%': 20,
     };
+    this.FALSE = {
+      type: NodeTypes.BOOL,
+      value: false,
+    };
   }
 
   parse() {
@@ -27,17 +33,17 @@ class Parser {
 
   isPunc(ch) {
     const tok = this.input.peek();
-    return tok && tok.type === 'punc' && (!ch || tok.value === ch) && tok;
+    return tok && tok.type === TokenTypes.PUNC && (!ch || tok.value === ch) && tok;
   }
 
   isKeyword(kw) {
     const tok = this.input.peek();
-    return tok && tok.type === 'kw' && (!kw || tok.value === kw) && tok;
+    return tok && tok.type === TokenTypes.KEYWORD && (!kw || tok.value === kw) && tok;
   }
 
   isOp(op) {
     const tok = this.input.peek();
-    return tok && tok.type === 'op' && (!op || tok.value === op) && tok;
+    return tok && tok.type === TokenTypes.OP && (!op || tok.value === op) && tok;
   }
 
   skipPunc(ch) {
@@ -67,7 +73,7 @@ class Parser {
         this.input.next();
         return this.maybeBinary(
           {
-            type: tok.value === '=' ? 'assign' : 'binary',
+            type: tok.value === '=' ? NodeTypes.ASSIGN : NodeTypes.BINARY,
             operator: tok.value,
             left,
             right: this.maybeBinary(this.parseAtom(), hisPrec),
@@ -96,7 +102,7 @@ class Parser {
 
   parseCall(func) {
     return {
-      type: 'call',
+      type: NodeTypes.CALL,
       func,
       args: this.delimited('(', ')', ',', this.parseExpression),
     };
@@ -104,21 +110,21 @@ class Parser {
 
   parseVarname() {
     const name = this.input.next();
-    if (name.type !== 'var') this.input.croak('Expecting variable name');
+    if (name.type !== TokenTypes.VAR) this.input.croak('Expecting variable name');
     return name.value;
   }
 
   parseIf() {
-    this.skipKeyword('if');
+    this.skipKeyword(Keywords.IF);
     const cond = this.parseExpression();
-    if (!this.isPunc('{')) this.skipKeyword('then');
+    if (!this.isPunc('{')) this.skipKeyword(Keywords.THEN);
     const then = this.parseExpression();
     const ret = {
-      type: 'if',
+      type: NodeTypes.IF,
       cond,
       then,
     };
-    if (this.isKeyword('else')) {
+    if (this.isKeyword(Keywords.ELSE)) {
       this.input.next();
       ret.else = this.parseExpression();
     }
@@ -127,7 +133,7 @@ class Parser {
 
   parseLambda() {
     return {
-      type: 'lambda',
+      type: NodeTypes.LAMBDA,
       vars: this.delimited('(', ')', ',', this.parseVarname),
       body: this.parseExpression(),
     };
@@ -135,8 +141,8 @@ class Parser {
 
   parseBool() {
     return {
-      type: 'bool',
-      value: this.input.next().value === 'true',
+      type: NodeTypes.BOOL,
+      value: this.input.next().value === Keywords.TRUE,
     };
   }
 
@@ -154,14 +160,18 @@ class Parser {
         return exp;
       }
       if (this.isPunc('{')) return this.parseProg();
-      if (this.isKeyword('if')) return this.parseIf();
-      if (this.isKeyword('true') || this.isKeyword('false')) return this.parseBool();
-      if (this.isKeyword('lambda') || this.isKeyword('λ')) {
+      if (this.isKeyword(Keywords.IF)) return this.parseIf();
+      if (this.isKeyword(Keywords.TRUE) || this.isKeyword(Keywords.FALSE)) return this.parseBool();
+      if (this.isKeyword(Keywords.LAMBDA)) {
         this.input.next();
         return this.parseLambda();
       }
       const tok = this.input.next();
-      if (tok.type === 'var' || tok.type === 'num' || tok.type === 'str') return tok;
+      if (tok.type === TokenTypes.VAR
+        || tok.type === TokenTypes.NUM
+        || tok.type === TokenTypes.STR) {
+        return tok;
+      }
       return this.unexpected();
     });
   }
@@ -172,14 +182,20 @@ class Parser {
       prog.push(this.parseExpression());
       if (!this.input.eof()) this.skipPunc(';');
     }
-    return { type: 'prog', prog };
+    return {
+      type: NodeTypes.PROG,
+      prog,
+    };
   }
 
   parseProg() {
     const prog = this.delimited('{', '}', ';', this.parseExpression);
-    if (prog.length === 0) return FALSE;
+    if (prog.length === 0) return this.FALSE;
     if (prog.length === 1) return prog[0];
-    return { type: 'prog', prog };
+    return {
+      type: NodeTypes.PROG,
+      prog,
+    };
   }
 
   parseExpression() {

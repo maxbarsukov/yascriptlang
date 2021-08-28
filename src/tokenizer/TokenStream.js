@@ -1,10 +1,11 @@
 import TokenTypes from './TokenTypes';
+import Keywords from './Keywords';
 
 class TokenStream {
   constructor(input) {
     this.input = input;
     this.current = null;
-    this.keywords = ['if', 'then', 'else', 'lambda', 'true', 'false'];
+    this.keywords = Object.values(Keywords);
   }
 
   isKeyword(x) {
