@@ -18,7 +18,7 @@ module.exports = {
   },
   rules: {
     'linebreak-style': 'off',
-    'arrow-parens': 'off',
+    'arrow-parens': 'warn',
     'comma-dangle': [
       'error',
       {
@@ -31,7 +31,7 @@ module.exports = {
     ],
     'object-curly-newline': 'off',
     'no-mixed-operators': 'off',
-    'arrow-body-style': 'off',
+    'arrow-body-style': 'warn',
     'function-paren-newline': 'off',
     'no-plusplus': 'off',
     'no-unused-vars': 'warn',
@@ -42,6 +42,5 @@ module.exports = {
     'no-alert': 'warn',
 
     'no-param-reassign': 'off',
-    'prettier/prettier': ['warn'],
   },
 };
