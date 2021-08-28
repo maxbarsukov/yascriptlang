@@ -1,3 +1,11 @@
-const say = (str) => console.log(str);
+import Parser from './parser/Parser.js';
+import InputStream from './tokenizer/InputStream.js';
+import TokenStream from './tokenizer/TokenStream.js';
 
-export default say;
+const Yascriptlang = {
+  Parser,
+  InputStream,
+  TokenStream,
+}
+
+export default Yascriptlang;

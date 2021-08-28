@@ -1,6 +1,6 @@
-import NodeTypes from './NodeTypes';
-import TokenTypes from '../tokenizer/TokenTypes';
-import Keywords from '../tokenizer/Keywords';
+import NodeTypes from './NodeTypes.js';
+import TokenTypes from '../tokenizer/TokenTypes.js';
+import Keywords from '../tokenizer/Keywords.js';
 
 class Parser {
   constructor(input) {

@@ -1,8 +1,15 @@
 #!/usr/bin/env node
 
-import say from '../src/index.js'
+import Yascriptlang from '../src/index.js'
 
 const args = process.argv.splice(process.execArgv.length + 2);
-const name = args[0];
 
-say('Hello ' + name);
+const code = '1 + 2'
+
+const inputStream = new Yascriptlang.InputStream(code);
+const tokenStream = new Yascriptlang.TokenStream(inputStream);
+const parser = new Yascriptlang.Parser(tokenStream);
+
+const ast = parser.parse();
+
+console.log(ast);

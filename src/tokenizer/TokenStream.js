@@ -1,5 +1,5 @@
-import TokenTypes from './TokenTypes';
-import Keywords from './Keywords';
+import TokenTypes from './TokenTypes.js';
+import Keywords from './Keywords.js';
 
 class TokenStream {
   constructor(input) {
