@@ -2,7 +2,7 @@
   "name": "yascriptlang",
   "version": "0.1.0",
   "description": "A simple scripting language inspired by Lisp",
-  "main": "./src/index.ts",
+  "main": "./bin/yascriptlang.js",
   "repository": {
     "type": "git",
     "url": "https://github.com/maxbarsukov/yascriptlang.git"
@@ -14,21 +14,23 @@
     "name": "Max Barsukov",
     "email": "maximbarsukov@bk.ru"
   },
-  "dependencies": {},
+  "type": "module",
   "devDependencies": {
-    "@typescript-eslint/eslint-plugin": "^4.29.3",
-    "@typescript-eslint/parser": "^4.29.3",
     "eslint": "^7.32.0",
+    "eslint-config-airbnb-base": "^14.2.1",
+    "eslint-plugin-import": "^2.24.2",
     "husky": "^7.0.2",
-    "prettier": "^2.3.2",
-    "typescript": "~4.3.5"
+    "prettier": "^2.3.2"
   },
   "scripts": {
-    "build": "tsc",
-    "lint": "eslint src/**/*.ts",
-    "format": "eslint src/**/*.ts --fix",
-    "prettier": "prettier --write src/**/*.ts"
+    "lint": "eslint src/**/*.js",
+    "format": "eslint src/**/*.js --fix",
+    "prettier": "prettier --write src/**/*.js"
   },
+  "bin": {
+    "yascriptlang": "./bin/yascriptlang.js"
+  },
+  "preferGlobal": true,
   "engines": {
     "node": ">= 10.0.0"
   },
