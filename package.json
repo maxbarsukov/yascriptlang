@@ -2,7 +2,7 @@
   "name": "yascriptlang",
   "version": "0.1.0",
   "description": "A simple scripting language inspired by Lisp",
-  "main": "index.js",
+  "main": "./src/index.ts",
   "repository": {
     "type": "git",
     "url": "https://github.com/maxbarsukov/yascriptlang.git"
@@ -21,7 +21,7 @@
     "eslint": "^7.32.0",
     "husky": "^7.0.2",
     "prettier": "^2.3.2",
-    "typescript": "^4.4.2"
+    "typescript": "~4.3.5"
   },
   "scripts": {
     "build": "tsc",
