@@ -78,14 +78,14 @@ class Evaluator {
   }
 
   static makeLambda(env, exp) {
-    return () => {
+    return function() {
       const names = exp.vars;
       const scope = env.extend();
       for (let i = 0; i < names.length; ++i) {
         scope.def(names[i], i < arguments.length ? arguments[i] : false);
       }
-      return this.evaluate(exp.body, scope);
-    };
+      return Evaluator.evaluate(exp.body, scope);
+    }
   }
 }
 
