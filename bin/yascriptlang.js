@@ -13,16 +13,71 @@ const {
 
 const args = process.argv.splice(process.execArgv.length + 2);
 
-const code = `
-with-return = lambda(f) lambda() call-cc(f);
+const stdLib = `
+cons = lambda(a, b) lambda(f) f(a, b);
+car = lambda(cell) cell(lambda(a, b) a);
+cdr = lambda(cell) cell(lambda(a, b) b);
+NIL = lambda(f) f(NIL, NIL);
 
-foo = with-return(lambda(return){
-  println("foo");
-  return("DONE");
-  println("bar");
+pstack = NIL;
+
+goto = false;
+
+reset = lambda(th) {
+  call-cc(lambda(k){
+    pstack = cons(k, pstack);
+    goto(th);
+  });
+};
+
+shift = lambda(f) {
+  call-cc(lambda(k){
+    goto(lambda(){
+      f(lambda(v){
+        call-cc(lambda(k1){
+          pstack = cons(k1, pstack);
+          k(v);
+        });
+      });
+    });
+  });
+};
+
+let (v = call-cc( lambda(k){ goto = k; k(false) } )) {
+  if v then let (r = v(), h = car(pstack)) {
+    pstack = cdr(pstack);
+    h(r);
+  }
+};
+
+with-yield = lambda(func) {
+  let (yield) {
+    yield = lambda(val) {
+      shift(lambda(SK){
+        func = SK;
+        val;
+      });
+    };
+    lambda(val) {
+      reset( lambda() func(val || yield) );
+    };
+  }
+};
+
+`
+
+const code = stdLib + `
+foo = with-yield(lambda(yield){
+  yield(1);
+  yield(2);
+  yield(3);
+  "DONE";
 });
 
-foo();
+println(foo());  # prints 1
+println(foo());  # prints 2
+println(foo());  # prints 3
+println(foo());  # prints DONE
 `
 
 const inputStream = new InputStream(code);
