@@ -50,6 +50,26 @@ let (v = call-cc( lambda(k){ goto = k; k(false) } )) {
   }
 };
 
+throw = lambda(){
+  println("ERROR: No more catch handlers!");
+  halt();
+};
+
+catch = lambda(tag, func){
+  call-cc(lambda(k){
+    let (rethrow = throw, ret) {
+      throw = lambda(t, val) {
+        throw = rethrow;
+        if t == tag then k(val)
+                    else throw(t, val);
+      };
+      ret = func();
+      throw = rethrow; # XXX
+      ret;
+    };
+  });
+};
+
 with-yield = lambda(func) {
   let (yield) {
     yield = lambda(val) {
@@ -67,17 +87,14 @@ with-yield = lambda(func) {
 `
 
 const code = stdLib + `
-foo = with-yield(lambda(yield){
-  yield(1);
-  yield(2);
-  yield(3);
-  "DONE";
-});
-
-println(foo());  # prints 1
-println(foo());  # prints 2
-println(foo());  # prints 3
-println(foo());  # prints DONE
+f1 = lambda() {
+  throw("foo", "EXIT");
+  print("not reached");
+};
+println(catch("foo", lambda() {
+  f1();
+  print("not reached");
+}));
 `
 
 const inputStream = new InputStream(code);
