@@ -4,6 +4,7 @@ import TokenStream from './tokenizer/TokenStream.js';
 
 import Evaluator from './runtime/Evaluator.js';
 import Environment from './runtime/Environment.js';
+import Executor from './runtime/Executor.js';
 
 const Yascriptlang = {
   Parser,
@@ -11,6 +12,7 @@ const Yascriptlang = {
   TokenStream,
   Environment,
   Evaluator,
+  Executor,
 }
 
 export default Yascriptlang;

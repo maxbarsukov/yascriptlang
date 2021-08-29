@@ -1,7 +1,9 @@
 import NodeTypes from '../parser/NodeTypes.js';
+import Executor from '../runtime/Executor.js';
 
 class Evaluator {
   static evaluate(exp, env, callback) {
+    Executor.guard(this.evaluate, arguments);
     switch (exp.type) {
       case NodeTypes.NUM:
       case NodeTypes.STR:
@@ -17,17 +19,20 @@ class Evaluator {
         if (exp.left.type !== NodeTypes.VAR) {
           throw new Error(`Cannot assign to ${JSON.stringify(exp.left)}`);
         }
-        this.evaluate(exp.right, env, (right) => {
+        this.evaluate(exp.right, env, function currentContinuation(right) {
+          Executor.guard(currentContinuation, arguments);
           callback(env.set(exp.left.value, right));
         });
         return;
       }
       case NodeTypes.BINARY: {
-        this.evaluate(exp.left, env, (left) => {
-          this.evaluate(exp.right, env, (right) => {
+        this.evaluate(exp.left, env, (function leftCont(left) {
+          Executor.guard(leftCont, arguments);
+          this.evaluate(exp.right, env, (function rightCont(right) {
+            Executor.guard(leftCont, arguments);
             callback(this.applyOp(exp.operator, left, right));
-          });
-        });
+          }).bind(this));
+        }).bind(this));
         return;
       }
       case NodeTypes.LAMBDA: {
@@ -36,10 +41,12 @@ class Evaluator {
       }
       case NodeTypes.LET: {
         const loop = (curEnv, i) => {
+          Executor.guard(loop, arguments);
           if (i < exp.vars.length) {
             const v = exp.vars[i];
             if (v.def) {
-              this.evaluate(v.def, curEnv, (value) => {
+              this.evaluate(v.def, curEnv, function currentContinuation(value) {
+                Executor.guard(currentContinuation, arguments);
                 const scope = curEnv.extend();
                 scope.def(v.name, value);
                 loop(scope, i + 1);
@@ -57,7 +64,8 @@ class Evaluator {
         return;
       }
       case NodeTypes.IF: {
-        this.evaluate(exp.cond, env, (cond) => {
+        this.evaluate(exp.cond, env, (function currentContinuation(cond) {
+          Executor.guard(currentContinuation, arguments);
           if (cond !== false) {
             this.evaluate(exp.then, env, callback);
           } else if (exp.else) {
@@ -65,13 +73,15 @@ class Evaluator {
           } else {
             callback(false);
           }
-        });
+        }).bind(this));
         return;
       }
       case NodeTypes.PROG: {
         const loop = (last, i) => {
+          Executor.guard(loop, arguments);
           if (i < exp.prog.length) {
-            this.evaluate(exp.prog[i], env, (val) => {
+            this.evaluate(exp.prog[i], env, function currentContinuation(val) {
+              Executor.guard(currentContinuation, arguments);
               loop(val, i + 1);
             });
           } else {
@@ -82,10 +92,13 @@ class Evaluator {
         return;
       }
       case NodeTypes.CALL: {
-        this.evaluate(exp.func, env, (func) => {
+        this.evaluate(exp.func, env, (function funcCont(func) {
+          Executor.guard(funcCont, arguments);
           const loop = (args, i) => {
+            Executor.guard(loop, arguments);
             if (i < exp.args.length) {
-              this.evaluate(exp.args[i], env, (arg) => {
+              this.evaluate(exp.args[i], env, function argCont(arg) {
+                Executor.guard(argCont, arguments);
                 args[i + 1] = arg;
                 loop(args, i + 1);
               });
@@ -94,7 +107,7 @@ class Evaluator {
             }
           };
           loop([callback], 0);
-        });
+        }).bind(this));
         return;
       }
       default:
@@ -135,6 +148,7 @@ class Evaluator {
 
   static makeLambda(env, exp) {
     function lambda(callback) {
+      Executor.guard(lambda, arguments);
       const names = exp.vars;
       const scope = env.extend();
       for (let i = 0; i < names.length; ++i) {

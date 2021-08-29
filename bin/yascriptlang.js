@@ -8,13 +8,14 @@ const {
   TokenStream,
   Environment,
   Evaluator,
+  Executor,
 } = Yascriptlang;
 
 const args = process.argv.splice(process.execArgv.length + 2);
 
 const code = `
 fib = lambda(n) if n < 2 then n else fib(n - 1) + fib(n - 2);
-(lambda() println(fib(7)))();
+(lambda() println(fib(11)))();
 `
 
 const inputStream = new InputStream(code);
@@ -34,6 +35,6 @@ globalEnv.def("println", function(callback, txt){
   callback(false);
 });
 
-Evaluator.evaluate(ast, globalEnv, function(result){
-  // the result of the entire program is now in "result"
-});
+Executor.execute(Evaluator.evaluate, [ ast, globalEnv, result => {
+  console.log("Result: ", result);
+}]);
