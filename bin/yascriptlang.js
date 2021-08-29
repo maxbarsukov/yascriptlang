@@ -7,7 +7,7 @@ const {
   InputStream,
   TokenStream,
   Environment,
-  Evaluator,
+  evaluate,
   Executor,
 } = Yascriptlang;
 
@@ -35,6 +35,6 @@ globalEnv.def("println", function(callback, txt){
   callback(false);
 });
 
-Executor.execute(Evaluator.evaluate, [ ast, globalEnv, result => {
+Executor.execute(evaluate, [ ast, globalEnv, result => {
   console.log("Result: ", result);
 }]);
