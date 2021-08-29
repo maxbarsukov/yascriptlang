@@ -13,23 +13,8 @@ const {
 const args = process.argv.splice(process.execArgv.length + 2);
 
 const code = `
-println(let loop (n = 100)
-          if n > 0 then n + loop(n - 1)
-                   else 0);
-
-let (x = 2, y = x + 1, z = x + y)
-  println(x + y + z);
-
-# errors out, the vars are bound to the let body
-# print(x + y + z);
-
-let (x = 10) {
-  let (x = x * 2, y = x * x) {
-    println(x);  ## 20
-    println(y);  ## 400
-  };
-  println(x);  ## 10
-};
+fib = lambda(n) if n < 2 then n else fib(n - 1) + fib(n - 2);
+(lambda() println(fib(7)))();
 `
 
 const inputStream = new InputStream(code);
@@ -39,11 +24,16 @@ const parser = new Parser(tokenStream);
 const ast = parser.parse();
 const globalEnv = new Environment();
 
-globalEnv.def("println", function(val){
-  console.log(val);
+globalEnv.def("print", function(callback, txt){
+  process.stdout.write(txt.toString());
+  callback(false);
 });
 
-globalEnv.def("print", function(val){
-  process.stdout.write(val.toString());
+globalEnv.def("println", function(callback, txt){
+  console.log(txt);
+  callback(false);
 });
-Evaluator.evaluate(ast, globalEnv);
+
+Evaluator.evaluate(ast, globalEnv, function(result){
+  // the result of the entire program is now in "result"
+});
