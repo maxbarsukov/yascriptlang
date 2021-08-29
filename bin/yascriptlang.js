@@ -15,7 +15,7 @@ const args = process.argv.splice(process.execArgv.length + 2);
 
 const code = `
 fib = lambda(n) if n < 2 then n else fib(n - 1) + fib(n - 2);
-(lambda() println(fib(11)))();
+time(lambda() println(fib(20)));
 `
 
 const inputStream = new InputStream(code);
@@ -33,6 +33,14 @@ globalEnv.def("print", function(callback, txt){
 globalEnv.def("println", function(callback, txt){
   console.log(txt);
   callback(false);
+});
+
+globalEnv.def("time", function(callback, func){
+  console.time("time");
+  func(function(ret){
+    console.timeEnd("time");
+    callback(ret);
+  });
 });
 
 Executor.execute(evaluate, [ ast, globalEnv, result => {
