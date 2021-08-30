@@ -3,13 +3,15 @@ const NodeTypes = {
   STR: 'str',
   BOOL: 'bool',
   VAR: 'var',
-  LAMBDA: 'lambda',
+  FN: 'fn',
   CALL: 'call',
   IF: 'if',
   ASSIGN: 'assign',
   BINARY: 'binary',
   PROG: 'prog',
   LET: 'let',
+  NOT: 'not',
+  DEFINE: 'define',
 };
 
 export default NodeTypes;
