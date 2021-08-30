@@ -12,7 +12,7 @@ const TokenStreamHelper = {
     return /[a-zλ_]/i.test(ch);
   },
   isId(ch) {
-    return this.isIdStart(ch) || '?!-<>=0123456789'.includes(ch);
+    return TokenStreamHelper.isIdStart(ch) || '?!-<>=0123456789'.includes(ch);
   },
   isKeyword(x) {
     return this.keywords.includes(x);
