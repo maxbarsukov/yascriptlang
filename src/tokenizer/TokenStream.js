@@ -1,5 +1,4 @@
 import TokenTypes from './TokenTypes.js';
-import Keywords from './Keywords.js';
 
 import TokenStreamHelper from './TokenStreamHelper.js';
 
