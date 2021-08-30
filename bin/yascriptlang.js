@@ -1,55 +1,42 @@
 #!/usr/bin/env node
 
-import Yascriptlang from '../src/index.js'
-
-const {
-  Parser,
-  InputStream,
-  TokenStream,
-  Environment,
-  evaluate,
-  Executor,
-} = Yascriptlang;
+import run from '../src/index.js'
 
 const args = process.argv.splice(process.execArgv.length + 2);
 
 const code = `
-print(2 + 2);
+# comment
+// comment
+/*
+comment
+comment
+comment
+*/
+
+println("Hello World!");
+println('Hello World!');
+println('Hello " World!');
+println("Hello ' World!");
+
+println(2 + 3 * 4);
+println(3 ** 3);
+
+def fib = fn (n) -> if n < 2 then n else fib(n - 1) + fib(n - 2);
+
+println(fib(15));
+
+def print-range = fn(a, b) ->
+                if a <= b then {
+                  print(a);
+                  if a + 1 <= b {
+                    print(", ");
+                    print-range(a + 1, b);
+                  } else println("");
+                };
+print-range(1, 5);
+
 `
 
-const inputStream = new InputStream(code);
-const tokenStream = new TokenStream(inputStream);
-const parser = new Parser(tokenStream);
-
-const ast = parser.parse();
-const globalEnv = new Environment();
-
-globalEnv.def('print', function(callback, txt) {
-  process.stdout.write(txt.toString());
-  callback(false);
-});
-
-globalEnv.def('println', function(callback, txt) {
-  console.log(txt);
-  callback(false);
-});
-
-globalEnv.def('time', function(callback, func) {
-  console.time('time');
-  func(function(ret){
-    console.timeEnd('time');
-    callback(ret);
-  });
-});
-
-globalEnv.def('call-cc', function CallCC(callback, func){
-  Executor.guard(CallCC, arguments);
-  func(callback, function curCont(discarded, ret){
-    Executor.guard(curCont, arguments);
-    callback(ret);
-  });
-});
-
-Executor.execute(evaluate, [ ast, globalEnv, result => {
+run(code, result => {
   console.log('Result: ', result);
-}]);
+});
