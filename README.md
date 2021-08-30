@@ -76,7 +76,7 @@ print(car(cdr(cdr(cdr(list))))); # 4
 print(car(cdr(cdr(cdr(cdr(list)))))); # 5
 
 ### Yield
-foo = with-yield(lambda(yield){
+foo = with-yield(fn(yield) -> {
   yield(1);
   yield(2);
   yield(3);
