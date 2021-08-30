@@ -8,6 +8,7 @@ class Parser {
     this.PRECEDENCE = {
       '=': 1,
       '*=': 1,
+      '**=': 1,
       '/=': 1,
       '+=': 1,
       '-=': 1,
@@ -24,7 +25,8 @@ class Parser {
       '*': 20,
       '/': 20,
       '%': 20,
-      '|>': 30,
+      '**': 30,
+      '|>': 40,
     };
     this.FALSE = {
       type: NodeTypes.BOOL,
@@ -69,7 +71,7 @@ class Parser {
       const hisPrec = this.PRECEDENCE[tok.value];
       if (hisPrec > myPrec) {
         this.tokens.next();
-        const assigns = ['=', '*=', '+=', '-=', '/='];
+        const assigns = ['=', '*=', '**=', '+=', '-=', '/='];
         const type = assigns.includes(tok.value)
           ? NodeTypes.ASSIGN
           : NodeTypes.BINARY;

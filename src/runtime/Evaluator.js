@@ -164,6 +164,7 @@ function applyOp(op, a, b, exp) {
     case '+': return num(a) + num(b);
     case '-': return num(a) - num(b);
     case '*': return num(a) * num(b);
+    case '**': return num(a) ** num(b);
     case '/': return num(a) / div(b);
     case '%': return num(a) % div(b);
     case '&&': return a !== false && b;
