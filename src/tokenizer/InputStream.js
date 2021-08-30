@@ -7,19 +7,20 @@ class InputStream {
   }
 
   next() {
-    const ch = this.input.charAt(this.pos++);
-    if (ch === '\n') {
-      this.line++;
-      this.col = 0;
-    } else {
-      this.col++;
-    }
+    const ch = this.input.charAt(this.pos);
     const val = {
       value: ch,
       line: this.line,
       col: this.col,
       pos: this.pos,
     };
+    this.pos++;
+    if (ch === '\n') {
+      this.line++;
+      this.col = 0;
+    } else {
+      this.col++;
+    }
     return val;
   }
 
