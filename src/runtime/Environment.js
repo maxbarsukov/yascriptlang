@@ -19,17 +19,16 @@ class Environment {
     return false;
   }
 
-  get(name, {line,col}={line:null,col:null}) {
+  get(name, { line, col } = { line: null, col: null }) {
     if (name in this.vars) {
-      return this.vars[name];
+      return this.vars[name].value;
     }
     throw new Error(`Undefined variable "${name}" at ${line}:${col}`);
   }
 
-  set(name, value, {line,col}={line: null,col: null}) {
+  set(name, value, { line, col } = { line: null, col: null }) {
     const scope = this.lookup(name);
-    // if (!scope && this.parent) {
-    if (!(scope || this).vars.hasOwnProperty(name)) {
+    if (Object.prototype.hasOwnProperty.call(!(scope || this).vars, name)) {
       throw new Error(`Undefined variable "${name}" at ${line}:${col}`);
     }
     const opt = (scope || this).vars[name];
@@ -41,19 +40,17 @@ class Environment {
   }
 
   def(name, value, { immutable, force } = { immutable: true, force: true },
-       {line, col}={line: null,col: null})
-  {
-    if (this.vars.hasOwnProperty(name) && !force) {
+    { line, col } = { line: null, col: null }) {
+    if (Object.prototype.hasOwnProperty.call(this.vars, name) && !force) {
       throw new Error(`Variable ${name} is already defined at ${line}:${col}`);
     }
     if (this.parent && !force) {
       throw new Error(`Cannot define value when not in global scope at ${line}:${col}`);
     }
-    this.vars[name] = {
+    return this.vars[name] = {
       value,
-      immutable
+      immutable,
     };
-    return this.vars[name];
   }
 }
 

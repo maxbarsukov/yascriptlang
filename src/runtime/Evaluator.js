@@ -18,11 +18,11 @@ export default function evaluate(exp, env, callback) {
       if (exp.left.type !== NodeTypes.VAR) {
         throw new Error(`Cannot assign to ${exp.left.type} at ${exp.line}:${exp.col}`);
       }
-     evaluate(exp.right, env, function currentContinuation(right) {
-       Executor.guard(currentContinuation, arguments);
+      evaluate(exp.right, env, function currentContinuation(right) {
+        Executor.guard(currentContinuation, arguments);
         callback(env.def(exp.left.value, right, {
           immutable: exp.variant === 'immutable',
-          force: false
+          force: false,
         }, exp));
       });
       return;
@@ -61,14 +61,14 @@ export default function evaluate(exp, env, callback) {
               Executor.guard(currentContinuation, arguments);
               const scope = curEnv.extend();
               scope.def(v.name.value, value, {
-                immutable: v.name.immutable
+                immutable: v.name.immutable,
               }, exp);
               loop(scope, i + 1);
             });
           } else {
             const scope = curEnv.extend();
             scope.def(v.name.value, false, {
-              immutable: v.name.immutable
+              immutable: v.name.immutable,
             }, exp);
             loop(scope, i + 1);
           }
@@ -120,10 +120,11 @@ export default function evaluate(exp, env, callback) {
               loop(args, i + 1);
             });
           } else {
-            if(args.length < (func.len || func.length)) {
-              throw new Error(`Not enough arguments provided to function at ${exp.line}:${exp.col}`)
+            if (args.length < (func.len || func.length)) {
+              throw new Error('Not enough arguments provided to function'
+                + `at ${exp.line}:${exp.col}`);
             }
-            const f = func.value ? func.value: func;
+            const f = func.value ? func.value : func;
             f(...args);
           }
         }
@@ -132,9 +133,10 @@ export default function evaluate(exp, env, callback) {
       return;
     }
     case NodeTypes.NOT: {
-      evaluate(exp.value, env,function currentContinuation(val){
-        if (typeof val != 'boolean') {
-          throw new Error(`'!' expects a boolean value, not "${typeof val}" at ${exp.line}:${exp.col}`);
+      evaluate(exp.value, env, (val) => {
+        if (typeof val !== 'boolean') {
+          throw new Error("'!' expects a boolean value,"
+            + `not "${typeof val}" at ${exp.line}:${exp.col}`);
         }
         callback(!val);
       });
@@ -183,12 +185,12 @@ function makeFunction(env, exp) {
     const scope = env.extend();
     for (let i = 0; i < names.length; ++i) {
       scope.def(names[i].value,
-      i + 1 < arguments.length
-        ? arguments[i + 1]
-        : false, {
-        immutable: names[i].immutable,
-        force: true,
-      });
+        i + 1 < arguments.length
+          ? arguments[i + 1]
+          : false, {
+          immutable: names[i].immutable,
+          force: true,
+        });
     }
     evaluate(exp.body, scope, callback);
   }
