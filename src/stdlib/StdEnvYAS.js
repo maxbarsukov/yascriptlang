@@ -7,6 +7,16 @@ export default function stdEnv(ast) {
 def car = fn(cell) -> cell(fn(a, b) -> a);
 def cdr = fn(cell) -> cell(fn(a, b) -> b);
 def NIL = fn(f) -> f(NIL, NIL);
+
+def foreach = fn(list, f) ->
+  if list != NIL {
+    f(car(list));
+    foreach(cdr(list), f);
+  };
+
+def range = fn(a, b) ->
+  if a <= b then cons(a, range(a + 1, b))
+  else NIL;
   `;
   const inputStream = new InputStream(std);
   const tokenStream = new TokenStream(inputStream);
