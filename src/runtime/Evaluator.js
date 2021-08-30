@@ -11,16 +11,29 @@ export default function evaluate(exp, env, callback) {
       return;
     }
     case NodeTypes.VAR: {
-      callback(env.get(exp.value));
+      callback(env.get(exp.value), exp);
+      return;
+    }
+    case NodeTypes.DEFINE: {
+      if (exp.left.type !== NodeTypes.VAR) {
+        throw new Error(`Cannot assign to ${exp.left.type} at ${exp.line}:${exp.col}`);
+      }
+     evaluate(exp.right, env, function currentContinuation(right) {
+       Executor.guard(currentContinuation, arguments);
+        callback(env.def(exp.left.value, right, {
+          immutable: exp.variant === 'immutable',
+          force: false
+        }, exp));
+      });
       return;
     }
     case NodeTypes.ASSIGN: {
       if (exp.left.type !== NodeTypes.VAR) {
-        throw new Error(`Cannot assign to ${JSON.stringify(exp.left)}`);
+        throw new Error(`Cannot assign to ${exp.left.type}`);
       }
       evaluate(exp.right, env, function currentContinuation(right) {
         Executor.guard(currentContinuation, arguments);
-        callback(env.set(exp.left.value, right));
+        callback(env.set(exp.left.value, right, exp));
       });
       return;
     }
@@ -29,13 +42,13 @@ export default function evaluate(exp, env, callback) {
         Executor.guard(leftCont, arguments);
         evaluate(exp.right, env, function rightCont(right) {
           Executor.guard(rightCont, arguments);
-          callback(applyOp(exp.operator, left, right));
+          callback(applyOp(exp.operator, left, right, exp));
         });
       });
       return;
     }
-    case NodeTypes.LAMBDA: {
-      callback(makeLambda(env, exp));
+    case NodeTypes.FN: {
+      callback(makeFunction(env, exp));
       return;
     }
     case NodeTypes.LET: {
@@ -47,12 +60,16 @@ export default function evaluate(exp, env, callback) {
             evaluate(v.def, curEnv, function currentContinuation(value) {
               Executor.guard(currentContinuation, arguments);
               const scope = curEnv.extend();
-              scope.def(v.name, value);
+              scope.def(v.name.value, value, {
+                immutable: v.name.immutable
+              }, exp);
               loop(scope, i + 1);
             });
           } else {
             const scope = curEnv.extend();
-            scope.def(v.name, false);
+            scope.def(v.name.value, false, {
+              immutable: v.name.immutable
+            }, exp);
             loop(scope, i + 1);
           }
         } else {
@@ -76,10 +93,11 @@ export default function evaluate(exp, env, callback) {
       return;
     }
     case NodeTypes.PROG: {
+      const scope = exp.global ? env : env.extend();
       const loop = (last, i) => {
         Executor.guard(loop, arguments);
         if (i < exp.prog.length) {
-          evaluate(exp.prog[i], env, function currentContinuation(val) {
+          evaluate(exp.prog[i], scope, function currentContinuation(val) {
             Executor.guard(currentContinuation, arguments);
             loop(val, i + 1);
           });
@@ -102,28 +120,41 @@ export default function evaluate(exp, env, callback) {
               loop(args, i + 1);
             });
           } else {
-            func(...args);
+            if(args.length < (func.len || func.length)) {
+              throw new Error(`Not enough arguments provided to function at ${exp.line}:${exp.col}`)
+            }
+            const f = func.value ? func.value: func;
+            f(...args);
           }
         }
         loop([callback], 0);
       });
       return;
     }
+    case NodeTypes.NOT: {
+      evaluate(exp.value, env,function currentContinuation(val){
+        if (typeof val != 'boolean') {
+          throw new Error(`'!' expects a boolean value, not "${typeof val}" at ${exp.line}:${exp.col}`);
+        }
+        callback(!val);
+      });
+      return;
+    }
     default:
-      throw new Error(`I don't know how to evaluate ${exp.type}`);
+      throw new Error(`Cannot evaluate ${JSON.stringify(exp)} at ${exp.line}:${exp.col}`);
   }
 }
 
-function applyOp(op, a, b) {
+function applyOp(op, a, b, exp) {
   function num(x) {
     if (typeof x !== 'number') {
-      throw new Error(`Expected number but got ${x}`);
+      throw new Error(`Expected number but got ${x} at ${exp.line}:${exp.col}`);
     }
     return x;
   }
   function div(x) {
     if (num(x) === 0) {
-      throw new Error('Divide by zero');
+      throw new Error(`Divide by zero at ${exp.line}:${exp.col}`);
     }
     return x;
   }
@@ -141,26 +172,30 @@ function applyOp(op, a, b) {
     case '>=': return num(a) >= num(b);
     case '==': return a === b;
     case '!=': return a !== b;
-    default: throw new Error(`Can't apply operator ${op}`);
+    default: throw new Error(`Can't apply operator ${op} at ${exp.line}:${exp.col}`);
   }
 }
 
-function makeLambda(env, exp) {
-  function lambda(callback) {
-    Executor.guard(lambda, arguments);
+function makeFunction(env, exp) {
+  function fn(callback) {
+    Executor.guard(fn, arguments);
     const names = exp.vars;
     const scope = env.extend();
     for (let i = 0; i < names.length; ++i) {
-      scope.def(names[i],
-        i + 1 < arguments.length
-          ? arguments[i + 1]
-          : false);
+      scope.def(names[i].value,
+      i + 1 < arguments.length
+        ? arguments[i + 1]
+        : false, {
+        immutable: names[i].immutable,
+        force: true,
+      });
     }
     evaluate(exp.body, scope, callback);
   }
+  fn.len = exp.vars.length + 1;
   if (exp.name) {
     env = env.extend();
-    env.def(exp.name, lambda);
+    env.def(exp.name.value, fn);
   }
-  return lambda;
+  return fn;
 }
