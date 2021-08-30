@@ -7,6 +7,7 @@ const TokenTypes = {
   OP: 'op', // operators
   MOD: 'mod', // modificator
   COMMENT: 'comment', // comment: #, //, /* */
+  MUT: 'mut', // mutable
 };
 
 export default TokenTypes;
