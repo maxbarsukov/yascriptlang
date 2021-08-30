@@ -14,19 +14,45 @@ class InputStream {
     } else {
       this.col++;
     }
-    return ch;
+    const val = {
+      value: ch,
+      line: this.line,
+      col: this.col,
+      pos: this.pos,
+    };
+    return val;
   }
 
-  peek() {
-    return this.input.charAt(this.pos);
+  peek(x = 0) {
+    return this.input.charAt(this.pos + x);
+  }
+
+  peekData(x = 0) {
+    const ch = this.input.charAt(this.pos + x);
+    const val = {
+      value: ch,
+      line: this.line,
+      col: this.col,
+      pos: this.pos,
+    };
+    for (let i = 0; i < x; i++) {
+      if (this.input.charAt(val.pos) === '\n') {
+        val.line++;
+        val.col = 0;
+      } else {
+        val.col++;
+      }
+      val.pos++;
+    }
+    return val;
   }
 
   eof() {
     return this.peek() === '';
   }
 
-  croak(msg) {
-    throw new Error(`${msg} (${this.line}:${this.col})`);
+  croak(type, msg) {
+    throw new Error(`${type}: ${msg} at line ${this.line}:${this.col}`);
   }
 }
 
