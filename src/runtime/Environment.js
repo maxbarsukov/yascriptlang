@@ -39,7 +39,7 @@ class Environment {
     return value;
   }
 
-  def(name, value, { immutable, force } = { immutable: true, force: true },
+  def(name, value, { immutable = true, force = true } = { immutable: true, force: true },
     { line, col } = { line: null, col: null }) {
     if (Object.prototype.hasOwnProperty.call(this.vars, name) && !force) {
       throw new Error(`Variable ${name} is already defined at ${line}:${col}`);

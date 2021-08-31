@@ -261,10 +261,11 @@ class Parser {
         col: peek.col,
       };
     }
+    const vars = this.delimited('(', ')', ',', this.parseVardef.bind(this));
     this.skipKeyword(Keywords.ARROW);
     return {
       type: NodeTypes.LET,
-      vars: this.delimited('(', ')', ',', this.parseVardef.bind(this)),
+      vars,
       body: this.parseExpression(),
       line: peek.line,
       col: peek.col,
