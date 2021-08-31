@@ -4,48 +4,48 @@ import Executor from '../runtime/Executor.js';
 export default function makeEnv() {
   const globalEnv = new Environment();
 
-  globalEnv.def('print', function(callback, txt) {
+  globalEnv.def('print', (callback, txt) => {
     process.stdout.write(txt.toString());
     callback(false);
   });
 
-  globalEnv.def('println', function(callback, txt) {
+  globalEnv.def('println', (callback, txt) => {
     console.log(txt);
     callback(false);
   });
 
-  globalEnv.def('clear', function(callback) {
+  globalEnv.def('clear', (callback) => {
     console.clear();
     callback(false);
   });
 
-  globalEnv.def('time', function(callback, func) {
+  globalEnv.def('time', (callback, func) => {
     console.time('time');
-    func(function(ret){
+    func((ret) => {
       console.timeEnd('time');
       callback(ret);
     });
   });
 
-  globalEnv.def('sleep', function(callback, delay) {
+  globalEnv.def('sleep', (callback, delay) => {
     setTimeout(() => {
       Executor.execute(callback, [false]);
     }, delay);
   });
 
-  globalEnv.def("callcc",function(callback,fn, ...args){
-    fn(callback,function CC(discard,ret){
+  globalEnv.def('callcc', (callback, fn, ...args) => {
+    fn(callback, (discard, ret) => {
       callback(ret);
     }, ...args);
   });
 
-  globalEnv.def('halt', function(k){});
+  globalEnv.def('halt', (k) => {});
 
-  var pstack = [];
+  const pstack = [];
 
   function _goto(f) {
-    f(function KGOTO(r) {
-      var h = pstack.pop();
+    f((r) => {
+      const h = pstack.pop();
       h(r);
     });
   }
@@ -54,11 +54,11 @@ export default function makeEnv() {
     pstack.push(KRESET);
     _goto(th);
   }
-  globalEnv.def("reset", reset);
+  globalEnv.def('reset', reset);
 
   function shift(KSHIFT, f) {
-    _goto(function(KGOTO) {
-      f(KGOTO, function SK(k1, v) {
+    _goto((KGOTO) => {
+      f(KGOTO, (k1, v) => {
         pstack.push(k1);
         KSHIFT(v);
       });
