@@ -1,8 +1,9 @@
 {
   "name": "yascriptlang",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "description": "A simple scripting language inspired by Lisp",
-  "main": "./bin/yascriptlang.js",
+  "main": "./bin/yasjs.js",
+  "homepage": "https://github.com/maxbarsukov/yascriptlang.git",
   "repository": {
     "type": "git",
     "url": "https://github.com/maxbarsukov/yascriptlang.git"
@@ -14,6 +15,12 @@
     "name": "Max Barsukov",
     "email": "maximbarsukov@bk.ru"
   },
+  "keywords": [
+    "language",
+    "programming language",
+    "lisp",
+    "interpreter"
+  ],
   "type": "module",
   "devDependencies": {
     "eslint": "^7.32.0",
@@ -41,6 +48,5 @@
       "pre-commit": "yarn lint"
     }
   },
-  "license": "MIT",
-  "private": true
+  "license": "MIT"
 }
