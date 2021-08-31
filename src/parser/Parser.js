@@ -95,7 +95,7 @@ class Parser {
     if (expr.type === NodeTypes.BINARY && expr.operator === '|>') {
       const { left } = expr;
       const { right } = expr;
-      if (right.type === NodeTypes.VAR) {
+      if (right.type === NodeTypes.VAR || right.type === NodeTypes.FN) {
         return {
           type: NodeTypes.CALL,
           func: right,
@@ -117,7 +117,7 @@ class Parser {
           args: [left, ...right.args],
         };
       }
-      this.tokens.croak.err('Parse Error', "Expected call or variable after '|>'");
+      this.tokens.croak('Parse Error', "Expected call or variable after '|>'");
     }
     return expr;
   }
