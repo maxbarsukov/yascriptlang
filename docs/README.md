@@ -1,78 +1,4 @@
-# Yascriptlang
-
-[![npm version](https://badge.fury.io/js/yascriptlang.svg)](https://www.npmjs.com/package/yascriptlang)
-[![Downloads](https://img.shields.io/npm/dm/yascriptlang.svg)](https://www.npmjs.com/package/yascriptlang)
-[![Package Size](https://img.shields.io/bundlephobia/min/yascriptlang)](https://www.npmjs.com/package/yascriptlang)
-
-**Y**et **A**nother **Script** **Lang**uage
-
-> Because everyone should have their own Lisp
-
-***Yascriptlang*** is high-level and multi-paradigm language.
-It has curly-bracket syntax, strong dynamic typing, recursion, and first-class functions.
-
-As a multi-paradigm language, ***yascriptlang*** supports functional and imperative programming styles both.
-
-***Yascriptlang*** can be interpreted as well as **compiled in JavaScript**.
-
-## Installing
-
-```bash
-npm install -g yascriptlang
-```
-
-## Documentation
-
-The documentation is located in the [docs](https://github.com/maxbarsukov/yascriptlang/tree/master/docs) folder.
-
-## Usage
-
-Run interpreter:
-```bash
-yas input.yas
-```
-
-Compile to **JS**:
-```bash
-yasc input.yas output.js
-```
-
-Compile to **JS** and run:
-```bash
-yasjs input.yas
-```
-
-## Building
-
-### Pre-reqs
-
-To build and run this app locally you will need a few things:
-
-- Install [Node.js](https://nodejs.org/en/);
-
-### Getting start
-
-- Clone the repository
-```bash
-git clone --depth=1 https://github.com/maxbarsukov/yascriptlang.git
-```
-- Install dependencies
-```bash
-cd yascriptlang
-yarn
-```
-- Run
-```bash
-node bin/yas.js input.yas
-# or
-node bin/yasc.js input.yas output.js
-# or
-node bin/yasjs.js input.yas
-````
-
 ## Examples of code
-
-Here are some code examples. Go to there [docs](https://github.com/maxbarsukov/yascriptlang/tree/master/docs) to see more.
 
 Comments:
 ```ruby
@@ -273,7 +199,3 @@ exit();
 println("After catch");
 throw("foo", "FOO");
 ```
-
-## License
-
-The package is available as open source under the terms of the [MIT License](https://opensource.org/licenses/MIT).

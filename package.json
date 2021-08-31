@@ -1,6 +1,6 @@
 {
   "name": "yascriptlang",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "A simple scripting language inspired by Lisp",
   "main": "./bin/yasjs.js",
   "homepage": "https://github.com/maxbarsukov/yascriptlang.git",
@@ -19,7 +19,10 @@
     "language",
     "programming language",
     "lisp",
-    "interpreter"
+    "interpreter",
+    "compiler",
+    "programming",
+    "javascript"
   ],
   "type": "module",
   "devDependencies": {
