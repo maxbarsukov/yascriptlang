@@ -28,7 +28,9 @@
     "prettier": "prettier --write src/**/*.js"
   },
   "bin": {
-    "yascriptlang": "./bin/yascriptlang.js"
+    "yas": "./bin/yas.js",
+    "yasc": "./bin/yasc.js",
+    "yasjs": "./bin/yasjs.js"
   },
   "preferGlobal": true,
   "engines": {

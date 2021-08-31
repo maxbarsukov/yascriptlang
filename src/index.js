@@ -7,8 +7,11 @@ import Executor from './runtime/Executor.js';
 
 import makeEnv from './stdlib/StdEnvJS.js'
 import stdEnv from './stdlib/StdEnvYAS.js'
+import makeCompilerEnv from './stdlib/StdCompilerEnv.js';
 
-export default function run(code, callback) {
+import CompilerJS from './codegen/CompilerJS.js';
+
+export function run(code, callback) {
   const inputStream = new InputStream(code);
   const tokenStream = new TokenStream(inputStream);
   const parser = new Parser(tokenStream);
@@ -17,4 +20,18 @@ export default function run(code, callback) {
   const globalEnv = makeEnv();
 
   Executor.execute(evaluate, [ stdEnv(ast), globalEnv, callback]);
+}
+
+export function compile(code) {
+  const inputStream = new InputStream(code);
+  const tokenStream = new TokenStream(inputStream);
+  const parser = new Parser(tokenStream);
+  const ast = parser.parse();
+  makeCompilerEnv();
+  const compiler = new CompilerJS(stdEnv(ast))
+  return compiler.compile();
+}
+
+export function runJS(jsCode) {
+  eval(jsCode);
 }
