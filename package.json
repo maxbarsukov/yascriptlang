@@ -36,8 +36,8 @@
     "prettier": "^2.3.2"
   },
   "scripts": {
-    "lint": "eslint **/*.js",
-    "format": "eslint**/*.js --fix",
+    "lint": "eslint src/**/*.js; eslint test/**/*.js; eslint **/*.js",
+    "format": "eslint src/**/*.js; eslint test/**/*.js; eslint **/*.js --fix",
     "prettier": "prettier --write **/*.js",
     "test": "./node_modules/mocha/bin/mocha --exit --colors test/**/*.js --timeout=10000"
   },
