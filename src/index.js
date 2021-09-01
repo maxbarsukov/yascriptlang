@@ -5,8 +5,8 @@ import TokenStream from './tokenizer/TokenStream.js';
 import evaluate from './runtime/Evaluator.js';
 import Executor from './runtime/Executor.js';
 
-import makeEnv from './stdlib/StdEnvJS.js'
-import stdEnv from './stdlib/StdEnvYAS.js'
+import makeEnv from './stdlib/StdEnvJS.js';
+import stdEnv from './stdlib/StdEnvYAS.js';
 import makeCompilerEnv from './stdlib/StdCompilerEnv.js';
 
 import CompilerJS from './codegen/CompilerJS.js';
@@ -19,7 +19,7 @@ export function run(code, callback) {
   const ast = parser.parse();
   const globalEnv = makeEnv();
 
-  Executor.execute(evaluate, [ stdEnv(ast), globalEnv, callback]);
+  Executor.execute(evaluate, [stdEnv(ast), globalEnv, callback]);
 }
 
 export function compile(code) {
@@ -28,7 +28,7 @@ export function compile(code) {
   const parser = new Parser(tokenStream);
   const ast = parser.parse();
   makeCompilerEnv();
-  const compiler = new CompilerJS(stdEnv(ast))
+  const compiler = new CompilerJS(stdEnv(ast));
   return compiler.compile();
 }
 
