@@ -13,9 +13,23 @@ print(sum(1, 2));
     expect(input.peek()).to.equal('d');
   });
 
+  it('InputStream#peekData() should ok', () => {
+    expect(input.peekData().value).to.equal('d');
+  });
+
+  it('InputStream#peekData() should contain col and line', () => {
+    expect(input.peekData().col).to.equal(0);
+    expect(input.peekData().line).to.equal(1);
+  });
+
   it('InputStream#next() should ok', () => {
     expect(input.next().value).to.eq('d');
     expect(input.eof()).to.eq(false);
+  });
+
+  it('InputStream#next() should contain col and line', () => {
+    expect(input.next().col).to.equal(1);
+    expect(input.next().line).to.equal(1);
   });
 
   it('InputStream#eof() should be true', () => {
