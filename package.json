@@ -26,16 +26,19 @@
   ],
   "type": "module",
   "devDependencies": {
+    "chai": "^4.3.4",
     "eslint": "^7.32.0",
     "eslint-config-airbnb-base": "^14.2.1",
     "eslint-plugin-import": "^2.24.2",
     "husky": "^7.0.2",
+    "mocha": "^9.1.1",
     "prettier": "^2.3.2"
   },
   "scripts": {
     "lint": "eslint src/**/*.js",
     "format": "eslint src/**/*.js --fix",
-    "prettier": "prettier --write src/**/*.js"
+    "prettier": "prettier --write src/**/*.js",
+    "test": "./node_modules/mocha/bin/mocha --exit --colors test/**/*.js --timeout=10000"
   },
   "bin": {
     "yas": "./bin/yas.js",
