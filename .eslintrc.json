@@ -44,7 +44,8 @@
         "no-console":"off",
         "no-alert":"warn",
         "no-param-reassign":"off",
-        "no-eval": "warn"
+        "no-eval": "warn",
+        "no-unused-expressions": "off"
     },
     "overrides":[
         {
