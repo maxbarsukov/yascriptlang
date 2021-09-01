@@ -1,7 +1,8 @@
 {
     "env": {
-        "browser": true,
-        "es2021": true
+        "node": true,
+        "es2021": true,
+        "mocha": true
     },
     "extends": [
         "airbnb-base"
@@ -42,6 +43,24 @@
         ],
         "no-console":"off",
         "no-alert":"warn",
-        "no-param-reassign":"off"
-    }
+        "no-param-reassign":"off",
+        "no-eval": "warn"
+    },
+    "overrides":[
+        {
+            "files":[
+                "**/*.test.js"
+            ],
+            "env":{
+                "mocha": true
+            },
+            "plugins":[
+                "mocha"
+            ],
+            "rules":{
+                "mocha/no-exclusive-tests": "error",
+                "mocha/no-pending-tests": "error"
+            }
+        }
+    ]
 }
