@@ -37,7 +37,7 @@
   },
   "scripts": {
     "lint": "eslint src/**/*.js; eslint test/**/*.js; eslint **/*.js",
-    "format": "eslint src/**/*.js; eslint test/**/*.js; eslint **/*.js --fix",
+    "format": "eslint --fix src/**/*.js; eslint --fix test/**/*.js --fix; eslint --fix **/*.js",
     "prettier": "prettier --write **/*.js",
     "test": "./node_modules/mocha/bin/mocha --exit --colors test/**/*.js --timeout=10000"
   },
