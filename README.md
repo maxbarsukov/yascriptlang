@@ -117,6 +117,11 @@ def a = {
   15   # the last semicolon can be missing
 };
 print(a); # prints 15
+
+def mut b = 1;
+b += 2;
+b **= 3;
+println(b); # => 27
 ```
 
 Raw JS:
