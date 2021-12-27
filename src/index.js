@@ -32,7 +32,13 @@ export function compile(code) {
   const ast = parser.parse();
   const compiler = new CompilerJS(stdEnv(ast));
   const js = makeCompilerEnv() + compiler.compile();
-  return UglifyJS.minify(js).code;
+
+  const uglified = UglifyJS.minify(js);
+  if (uglified.error) {
+    throw EvalError(`Comppiling Error: ${uglified.error}`);
+  } else {
+    return uglified.code;
+  }
 }
 
 export function runJS(jsCode) {
