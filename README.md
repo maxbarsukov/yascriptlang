@@ -119,6 +119,14 @@ def a = {
 print(a); # prints 15
 ```
 
+Raw JS:
+
+```ruby
+println(_js_ '[0, 1, 2, 3].length * 2') # => 8
+println(_js_ 'console.log("HI!"); 2+4') # => prints HI! and 6
+println(_js_ '((a) => { console.log(`HI, ${a}!`)})("Max")') # => prints HI, Max!
+```
+
 Mutable Variables:
 
 ```ruby
