@@ -1,5 +1,5 @@
-import Environment from '../runtime/Environment.js';
-import Executor from '../runtime/Executor.js';
+import Environment from '../../runtime/Environment.js';
+import Executor from '../../runtime/Executor.js';
 
 export default function makeEnv() {
   const globalEnv = new Environment();
@@ -49,6 +49,7 @@ export default function makeEnv() {
       h(r);
     });
   }
+  globalEnv.def('_goto', _goto);
 
   function reset(KRESET, th) {
     pstack.push(KRESET);
@@ -64,6 +65,7 @@ export default function makeEnv() {
       });
     });
   }
+  globalEnv.def('shift', shift);
 
   return globalEnv;
 }

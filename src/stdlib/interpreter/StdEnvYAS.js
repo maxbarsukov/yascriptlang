@@ -1,6 +1,6 @@
-import Parser from '../parser/Parser.js';
-import InputStream from '../tokenizer/InputStream.js';
-import TokenStream from '../tokenizer/TokenStream.js';
+import Parser from '../../parser/Parser.js';
+import InputStream from '../../tokenizer/InputStream.js';
+import TokenStream from '../../tokenizer/TokenStream.js';
 
 export default function stdEnv(ast) {
   const std = `def cons = fn(a, b) -> fn(f) -> f(a, b);

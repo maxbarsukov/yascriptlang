@@ -1,3 +1,5 @@
+import UglifyJS from 'uglify-js';
+
 import Parser from './parser/Parser.js';
 import InputStream from './tokenizer/InputStream.js';
 import TokenStream from './tokenizer/TokenStream.js';
@@ -5,9 +7,10 @@ import TokenStream from './tokenizer/TokenStream.js';
 import evaluate from './runtime/Evaluator.js';
 import Executor from './runtime/Executor.js';
 
-import makeEnv from './stdlib/StdEnvJS.js';
-import stdEnv from './stdlib/StdEnvYAS.js';
-import makeCompilerEnv from './stdlib/StdCompilerEnv.js';
+import makeEnv from './stdlib/interpreter/StdEnvJS.js';
+import stdEnv from './stdlib/interpreter/StdEnvYAS.js';
+
+import makeCompilerEnv from './stdlib/compiler/StdCompilerEnv.js';
 
 import CompilerJS from './codegen/CompilerJS.js';
 
@@ -27,9 +30,9 @@ export function compile(code) {
   const tokenStream = new TokenStream(inputStream);
   const parser = new Parser(tokenStream);
   const ast = parser.parse();
-  makeCompilerEnv();
   const compiler = new CompilerJS(stdEnv(ast));
-  return compiler.compile();
+  const js = makeCompilerEnv() + compiler.compile();
+  return UglifyJS.minify(js).code;
 }
 
 export function runJS(jsCode) {
