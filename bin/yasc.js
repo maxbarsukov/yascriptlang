@@ -5,8 +5,8 @@ import path from 'path';
 import { compile } from '../src/index.js';
 
 const [, , ...args] = process.argv;
-const inputPath = `${process.cwd()}${path.sep}${args[0]}`;
-const outputPath = `${process.cwd()}${path.sep}${args[1]}`;
+const inputPath = args[0];
+const outputPath = args[1];
 
 fs.readFile(inputPath, { encoding: 'utf-8' }, (err, data) => {
   if (err) {
