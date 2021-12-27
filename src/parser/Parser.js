@@ -72,9 +72,7 @@ class Parser {
       if (hisPrec > myPrec) {
         this.tokens.next();
         const assigns = ['=', '*=', '**=', '+=', '-=', '/='];
-        const type = assigns.includes(tok.value)
-          ? NodeTypes.ASSIGN
-          : NodeTypes.BINARY;
+        const type = assigns.includes(tok.value) ? NodeTypes.ASSIGN : NodeTypes.BINARY;
         return this.maybeBinary(
           {
             type,
@@ -103,7 +101,8 @@ class Parser {
           col: right.col,
           args: [this.maybePipe(left)],
         };
-      } if (right.type === NodeTypes.CALL) {
+      }
+      if (right.type === NodeTypes.CALL) {
         return {
           type: NodeTypes.CALL,
           func: {
@@ -299,8 +298,10 @@ class Parser {
     if (left) {
       this.skipVar(left.value);
     } else {
-      this.tokens.croak('Parse Error', `Expecting variable name after ${variant === 'immutable'
-        ? 'def' : 'def mut'}`);
+      this.tokens.croak(
+        'Parse Error',
+        `Expecting variable name after ${variant === 'immutable' ? 'def' : 'def mut'}`
+      );
     }
     let right = {
       type: NodeTypes.NUM,
@@ -320,6 +321,20 @@ class Parser {
     };
   }
 
+  parseRaw() {
+    this.skipKeyword(Keywords._JS_);
+    if (this.tokens.peek().type !== NodeTypes.STR) {
+      this.tokens.croak(
+        'Parse Error',
+        '_JS_ raw code must be a plain string'
+      );
+    }
+    return {
+      type: NodeTypes._JS_,
+      code: this.tokens.next().value,
+    };
+  }
+
   parseAtom() {
     return this.maybeCall(() => {
       if (this.isPunc('(')) {
@@ -335,10 +350,13 @@ class Parser {
       if (this.isKeyword(Keywords.FN) || this.isKeyword(Keywords.FN_ARROW)) return this.parseFn();
       if (this.isKeyword(Keywords.DEF)) return this.parseDefine();
       if (this.isKeyword(Keywords.LET)) return this.parseLet();
+      if (this.isKeyword(Keywords._JS_)) return this.parseRaw();
       const tok = this.tokens.next();
-      if (tok.type === TokenTypes.VAR
+      if (
+        tok.type === TokenTypes.VAR
         || tok.type === TokenTypes.NUM
-        || tok.type === TokenTypes.STR) {
+        || tok.type === TokenTypes.STR
+      ) {
         return tok;
       }
       return this.unexpected();

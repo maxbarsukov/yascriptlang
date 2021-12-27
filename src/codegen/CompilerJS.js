@@ -46,6 +46,9 @@ export default class CompilerJS {
       case NodeTypes.CALL: {
         return this.jsCall(exp);
       }
+      case NodeTypes._JS_: {
+        return this.jsRaw(exp);
+      }
       default:
         throw new Error(`Cannot compile to JS ${JSON.stringify(exp)} at ${exp.line}:${exp.col}`);
     }
@@ -120,5 +123,9 @@ export default class CompilerJS {
 
   jsCall(exp) {
     return `${this.js(exp.func)}(${exp.args.map(this.js.bind(this)).join(', ')})`;
+  }
+
+  jsRaw(exp) {
+    return `(${exp.code})`;
   }
 }

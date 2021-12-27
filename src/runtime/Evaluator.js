@@ -10,6 +10,10 @@ export default function evaluate(exp, env, callback) {
       callback(exp.value);
       return;
     }
+    case NodeTypes._JS_: {
+      callback(eval(exp.code));
+      return;
+    }
     case NodeTypes.VAR: {
       callback(env.get(exp.value), exp);
       return;

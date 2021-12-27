@@ -11,6 +11,7 @@ const Keywords = {
   MUT: 'mut',
   FN_ARROW: 'fn->',
   DEF: 'def',
+  _JS_: '_js_',
 };
 
 export default Keywords;

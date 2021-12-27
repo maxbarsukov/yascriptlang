@@ -12,6 +12,7 @@ const NodeTypes = {
   LET: 'let',
   NOT: 'not',
   DEFINE: 'define',
+  _JS_: '_js_',
 };
 
 export default NodeTypes;
