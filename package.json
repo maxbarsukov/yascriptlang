@@ -55,5 +55,8 @@
       "pre-commit": "yarn lint"
     }
   },
-  "license": "MIT"
+  "license": "MIT",
+  "dependencies": {
+    "uglify-js": "^3.14.5"
+  }
 }
