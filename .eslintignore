@@ -2,4 +2,7 @@
 /.vscode
 /.idea
 /.vs
+/output
+/bin
+/docs
 node_modules
