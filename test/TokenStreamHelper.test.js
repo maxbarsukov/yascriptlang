@@ -25,6 +25,7 @@ describe('Token Stream Helper', () => {
     expect(TokenStreamHelper.isKeyword('if')).to.be.true;
     expect(TokenStreamHelper.isKeyword('(')).to.be.false;
     expect(TokenStreamHelper.isKeyword('+')).to.be.false;
+    expect(TokenStreamHelper.isKeyword('++')).to.be.false;
   });
 
   it('TokenStream#isPunc() should be ok', () => {
@@ -40,6 +41,7 @@ describe('Token Stream Helper', () => {
 
   it('TokenStream#isOpChar() should be ok', () => {
     expect(TokenStreamHelper.isOpChar('+')).to.be.true;
+    expect(TokenStreamHelper.isOpChar('++')).to.be.true;
     expect(TokenStreamHelper.isOpChar('-')).to.be.true;
     expect(TokenStreamHelper.isOpChar('*')).to.be.true;
     expect(TokenStreamHelper.isOpChar('def')).to.be.false;
