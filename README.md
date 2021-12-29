@@ -94,6 +94,7 @@ println("Hello World!");
 println('Hello World!');
 println('Hello " World!');
 println("Hello ' World!");
+println('My name is ' ++ 'Max'); # => My name is Max
 ```
 
 Math:
