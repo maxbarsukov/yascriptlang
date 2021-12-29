@@ -158,6 +158,12 @@ function applyOp(op, a, b, exp) {
     }
     return x;
   }
+  function str(x) {
+    if (typeof x !== 'string') {
+      throw new Error(`Expected string but got ${x} at ${exp.line}:${exp.col}`);
+    }
+    return x;
+  }
   function div(x) {
     if (num(x) === 0) {
       throw new Error(`Divide by zero at ${exp.line}:${exp.col}`);
@@ -166,6 +172,7 @@ function applyOp(op, a, b, exp) {
   }
   switch (op) {
     case '+': return num(a) + num(b);
+    case '++': return str(a) + str(b);
     case '-': return num(a) - num(b);
     case '*': return num(a) * num(b);
     case '**': return num(a) ** num(b);
