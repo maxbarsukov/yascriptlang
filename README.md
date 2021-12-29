@@ -79,6 +79,8 @@ Comments:
 ```ruby
 ### Comments
 # comment
+```
+```js
 // comment
 /*
 multi
@@ -168,11 +170,11 @@ println(func()); # => 20. Functions returns the last var
 Lambdas:
 
 ```ruby
-# fn -> {} is short for fn() -> {}
+# fn-> {} is short for fn() -> {}
 
-(fn->{
-println(3 ** 3);
-})();
+(fn->
+  println(3 ** 3);
+)();
 ```
 
 Pipes:
