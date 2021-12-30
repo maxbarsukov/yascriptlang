@@ -41,7 +41,7 @@ describe('Token Stream Helper', () => {
 
   it('TokenStream#isOpChar() should be ok', () => {
     expect(TokenStreamHelper.isOpChar('+')).to.be.true;
-    expect(TokenStreamHelper.isOpChar('++')).to.be.true;
+    expect(TokenStreamHelper.isOpChar('++')).to.be.false;
     expect(TokenStreamHelper.isOpChar('-')).to.be.true;
     expect(TokenStreamHelper.isOpChar('*')).to.be.true;
     expect(TokenStreamHelper.isOpChar('def')).to.be.false;
