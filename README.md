@@ -5,6 +5,8 @@
 [![Downloads](https://img.shields.io/npm/dm/yascriptlang.svg)](https://www.npmjs.com/package/yascriptlang)
 [![Package Size](https://img.shields.io/bundlephobia/min/yascriptlang)](https://www.npmjs.com/package/yascriptlang)
 
+![Yascriptlang Logo](https://github.com/maxbarsukov/yascriptlang/blob/master/docs/logo.png?raw=true)
+
 **Y**et **A**nother **Script** **Lang**uage
 
 > Because everyone should have their own Lisp
